@@ -153,6 +153,8 @@ function PantsGallery({ images, currentIndex, setCurrentIndex }) {
 }
 
 function saveOutfit(outfit) {
+  console.log(outfit)
+
   fetch("http://localhost:3000/save-outfit", {
     method: "POST",
     headers: {
@@ -221,6 +223,7 @@ const outfit = {
 />
 
     <button className="save-button" onClick={() => {
+        console.log(outfit)
        console.log("CLICKED");
        saveOutfit(outfit);
     }}>

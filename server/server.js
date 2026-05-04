@@ -14,10 +14,12 @@ app.use(express.json());
 
 app.get('/outfits', async (req, res) => {
   const allOutfits = await Outfit.find();
+  console.log(allOutfits)
   res.json(allOutfits);
 });
 
 app.post('/save-outfit', async (req, res) => {
+  console.log(req.body)
   try {
     const newOutfit = new Outfit(req.body);
     await newOutfit.save();
