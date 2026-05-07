@@ -126,6 +126,7 @@ function ShirtsGallery({ images, currentIndex, setCurrentIndex }) {
   );
 }
 
+
 function PantsGallery({ images, currentIndex, setCurrentIndex }) {
   return (
     <div className="pants-container">
