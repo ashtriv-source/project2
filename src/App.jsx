@@ -1,7 +1,7 @@
 
 
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -152,21 +152,26 @@ function PantsGallery({ images, currentIndex, setCurrentIndex }) {
   );
 }
 
-function saveOutfit(outfit) {
-  console.log(outfit)
+async function saveOutfit(outfit) {
+  console.log(outfit);
 
-  fetch("http://localhost:3000/save-outfit", {
+  const response = await fetch("http://localhost:3000/save-outfit", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
     body: JSON.stringify(outfit)
-  })
-  .then(res => res.text())
-  .then(data => console.log(data));
+  });
+
+  const data = await response.text();
+  console.log(data);
 }
 
+
+
 function App(){
+  const [savedOutfits, setSavedOutfits] = useState([]);
+  const [selected, setSelected] = useState("");
 
 const shirts = [shirts1, shirts2, shirts3, shirts4, shirts5];
 const pants = [pants1, pants2, pants3, pants4, pants5];
@@ -178,6 +183,13 @@ const [pantsIndex, setPantsIndex] = useState(0);
 const [shoesIndex, setShoesIndex] = useState(0);
 const [bagIndex, setBagIndex] = useState(0);
 
+useEffect(() => {
+  fetch("http://localhost:3000/outfits")
+    .then(res => res.json())
+    .then(data => {
+      setSavedOutfits(data);
+    });
+}, []);
 
 const outfit = {
   top: shirts[shirtIndex],
@@ -185,12 +197,42 @@ const outfit = {
   shoes: shoes[shoesIndex],
   bag: bags[bagIndex]
 };
+
+function handleSelect(value) {
+  setSelected(value);
+
+  const selectedOutfit = savedOutfits[value];
+
+  if (!selectedOutfit) return;
+
+  setShirtIndex(shirts.indexOf(selectedOutfit.top));
+  setPantsIndex(pants.indexOf(selectedOutfit.bottom));
+  setShoesIndex(shoes.indexOf(selectedOutfit.shoes));
+  setBagIndex(bags.indexOf(selectedOutfit.bag));
+}
   // MAIN DATA GOES HERE
+
 
 
   return(
     <>
     
+<div className="dropdown-container">
+  <select
+    value={selected}
+    onChange={(e) => handleSelect(e.target.value)}
+    className="outfit-dropdown"
+  >
+    <option value="">Select Saved Outfit</option>
+
+    {savedOutfits.map((outfit, index) => (
+      <option key={outfit._id} value={index}>
+        Outfit {index + 1}
+      </option>
+    ))}
+  </select>
+</div>
+
     <div>
       <h1>Outfit Generator</h1>
     </div>
@@ -222,15 +264,26 @@ const outfit = {
   setCurrentIndex={setBagIndex}
 />
 
-    <button className="save-button" onClick={() => {
-        console.log(outfit)
-       console.log("CLICKED");
-       saveOutfit(outfit);
-    }}>
-       ⭐
-    </button>
+<button
+  className="save-button"
+  onClick={async () => {
+    console.log(outfit);
+
+    await saveOutfit(outfit);
+
+    fetch("http://localhost:3000/outfits")
+      .then(res => res.json())
+      .then(data => {
+        setSavedOutfits(data);
+      });
+  }}
+>
+  ⭐
+</button>
     
     </>
+
+    
 
   );
 

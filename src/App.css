@@ -117,3 +117,18 @@ h1 {
   background: white; 
 }
 
+
+.dropdown-container {
+  display: flex;
+  justify-content: center;
+  padding-left: 600px;
+  margin-top: 600px;
+}
+
+.outfit-dropdown {
+  padding: 10px 16px;
+  font-size: 16px;
+  border-radius: 10px;
+    top: 20px;
+  right: 20px;
+}
